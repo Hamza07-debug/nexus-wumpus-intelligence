@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="dark">
+    <meta name="description" content="Dynamic Wumpus World Logic Agent — AI-powered exploration using propositional logic KB and resolution refutation.">
+    <title>NEXUS · Wumpus Intelligence System</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="nexus-shell">
+        <!-- ═══ COMMAND BAR ═══ -->
+        <header class="command-bar">
+            <div class="system-identity">
+                <h1><span class="brand-highlight">NEXUS</span> · Wumpus Intelligence</h1>
+                <span class="tagline">Propositional Logic KB · Resolution Refutation · Autonomous Exploration</span>
+            </div>
+            <div class="config-cluster">
+                <div class="param-field">
+                    <label for="cfgHeight">Rows</label>
+                    <input type="number" id="cfgHeight" value="4" min="3" max="8">
+                </div>
+                <div class="param-field">
+                    <label for="cfgWidth">Cols</label>
+                    <input type="number" id="cfgWidth" value="4" min="3" max="8">
+                </div>
+                <div class="param-field">
+                    <label for="cfgTraps">Pits</label>
+                    <input type="number" id="cfgTraps" value="2" min="0" max="20">
+                </div>
+                <div class="param-field">
+                    <label for="cfgBeasts">Wumpus</label>
+                    <input type="number" id="cfgBeasts" value="1" min="0" max="20">
+                </div>
+            </div>
+            <div class="action-cluster">
+                <button id="btnInitialize" class="nexus-btn btn-initialize">Initialize</button>
+                <button id="btnAdvance" class="nexus-btn btn-advance" disabled>Step</button>
+                <button id="btnAutomate" class="nexus-btn btn-automate" type="button">Auto Run</button>
+                <button id="btnReset" class="nexus-btn btn-reset" type="button">Reset</button>
+                <button id="btnReveal" class="nexus-btn btn-reveal" type="button">Reveal</button>
+            </div>
+        </header>
+
+        <!-- ═══ MAIN DECK ═══ -->
+        <main class="operations-deck">
+            <!-- LEFT: GRID THEATER -->
+            <section class="theater-area">
+                <div class="glass-panel">
+                    <div class="panel-header">
+                        <span class="panel-title">Exploration Grid</span>
+                        <span class="status-chip" id="engineChip">Engine Active</span>
+                    </div>
+                    <div class="grid-viewport">
+                        <div id="cellMatrix" class="cell-matrix"></div>
+                    </div>
+                </div>
+                <div class="glass-panel">
+                    <div class="legend-strip">
+                        <div class="legend-entry"><div class="legend-swatch swatch-explorer">◆</div>Agent</div>
+                        <div class="legend-entry"><div class="legend-swatch swatch-safe"></div>Safe</div>
+                        <div class="legend-entry"><div class="legend-swatch swatch-unknown"></div>Unknown</div>
+                        <div class="legend-entry"><div class="legend-swatch swatch-hazard">!</div>Hazard</div>
+                        <div class="legend-entry"><div class="legend-swatch swatch-trap">🕳</div>Pit</div>
+                        <div class="legend-entry"><div class="legend-swatch swatch-beast">W</div>Wumpus</div>
+                        <div class="legend-entry"><div class="legend-swatch swatch-treasure">★</div>Gold</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- RIGHT: INTEL SIDEBAR -->
+            <aside class="intel-sidebar">
+                <!-- Metrics -->
+                <div class="glass-panel">
+                    <div class="panel-header">
+                        <span class="panel-title">Agent Telemetry</span>
+                    </div>
+                    <div class="metric-mosaic">
+                        <div class="metric-tile tile-position">
+                            <span class="tile-label">Position</span>
+                            <span class="tile-value" id="valPosition">(1, 1)</span>
+                        </div>
+                        <div class="metric-tile tile-moves">
+                            <span class="tile-label">Move Count</span>
+                            <span class="tile-value" id="valMoves">0</span>
+                        </div>
+                        <div class="metric-tile tile-kb">
+                            <span class="tile-label">KB Clauses</span>
+                            <span class="tile-value" id="valKBSize">0</span>
+                        </div>
+                        <div class="metric-tile tile-resolutions">
+                            <span class="tile-label">Resolutions</span>
+                            <span class="tile-value" id="valResolutions">0</span>
+                        </div>
+                        <div class="metric-tile tile-status">
+                            <span class="tile-label">Agent Status</span>
+                            <span class="tile-value" id="valStatus">Awaiting Initialization</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Percepts -->
+                <div class="glass-panel">
+                    <div class="panel-header">
+                        <span class="panel-title">Current Percepts</span>
+                    </div>
+                    <div class="percept-display" id="perceptDisplay">
+                        <span class="percept-tag">None</span>
+                    </div>
+                </div>
+
+                <!-- Deductions -->
+                <div class="glass-panel">
+                    <div class="panel-header">
+                        <span class="panel-title">KB Entailment Results</span>
+                    </div>
+                    <div class="deduction-count" id="deductionCount">No inference run yet.</div>
+                    <div class="deduction-feed" id="deductionFeed"></div>
+                </div>
+
+                <!-- CNF Viewer -->
+                <div class="glass-panel">
+                    <div class="panel-header">
+                        <span class="panel-title">CNF Knowledge Base</span>
+                    </div>
+                    <pre class="formula-viewer" id="formulaViewer">Awaiting initialization...</pre>
+                </div>
+
+                <!-- How It Works -->
+                <div class="glass-panel methodology-panel">
+                    <button class="methodology-toggle" id="methodologyToggle" type="button">
+                        <span class="panel-title">How It Works</span>
+                        <span class="toggle-chevron" id="toggleChevron">▼</span>
+                    </button>
+                    <div class="methodology-body" id="methodologyBody">
+                        <h4>Knowledge Base (KB)</h4>
+                        <p>The agent maintains a set of propositional logic clauses in <strong>Conjunctive Normal Form (CNF)</strong>. Each clause is a disjunction of literals — for example, <code>(¬TRAP₁,₂ ∨ WIND₁,₁)</code> states "if cell (1,2) has a trap, then cell (1,1) has wind."</p>
+
+                        <h4>Percept Encoding</h4>
+                        <p>When the agent visits a cell, sensor readings (breeze, stench, glitter) are converted into logical axioms:</p>
+                        <ul>
+                            <li><strong>Breeze ↔ Adjacent Pit:</strong> A breeze at cell (r,c) means at least one neighbor has a pit, encoded as a biconditional in CNF.</li>
+                            <li><strong>Stench ↔ Adjacent Wumpus:</strong> Same logic applies for stench and wumpus presence.</li>
+                        </ul>
+
+                        <h4>Resolution Refutation</h4>
+                        <p>To determine if a cell is safe, the engine uses <strong>proof by contradiction</strong>:</p>
+                        <ol>
+                            <li>Negate the query (e.g., assume cell has a trap).</li>
+                            <li>Add this negated hypothesis to a Set of Support (SOS).</li>
+                            <li>Repeatedly resolve SOS clauses against KB clauses.</li>
+                            <li>If an <strong>empty clause</strong> (⊥) is derived → the original query is <strong>proven true</strong>.</li>
+                            <li>If no empty clause is found within the step limit → result is <strong>inconclusive</strong>.</li>
+                        </ol>
+
+                        <h4>Decision Loop</h4>
+                        <p>Each step: infer safe/hazard cells → plan a path via BFS over confirmed-safe cells → move to the most informative unexplored safe cell. If stuck, the agent may fire an arrow toward a suspected Wumpus.</p>
+                    </div>
+                </div>
+            </aside>
+        </main>
+    </div>
+
+    <!-- ═══ OUTCOME MODAL ═══ -->
+    <div id="outcomeOverlay" class="outcome-overlay concealed" role="dialog" aria-modal="true" aria-labelledby="outcomeHeading">
+        <div class="outcome-card">
+            <div class="outcome-icon" id="outcomeIcon">⚠</div>
+            <h2 id="outcomeHeading">Game Over</h2>
+            <p id="outcomeMessage">The simulation has ended.</p>
+            <button id="btnRestart" class="nexus-btn btn-initialize" type="button">New Mission</button>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

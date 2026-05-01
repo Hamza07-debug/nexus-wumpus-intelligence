@@ -1,164 +1,43 @@
-# 🧠 NEXUS: Wumpus Intelligence System
+# NEXUS · Wumpus Intelligence System
+A web-based simulation of the classic Wumpus World where a knowledge-based agent uses propositional logic and resolution to infer safe moves. Features a professional intelligence dashboard UI.
 
-A **web-based intelligent agent simulation** inspired by the classic *Wumpus World* problem from Artificial Intelligence.
-This system demonstrates how a **knowledge-based agent** uses **Propositional Logic, CNF conversion, and Resolution Refutation** to make safe decisions in an uncertain environment.
+## Project Contents
 
----
+* `index.html` — NEXUS dashboard user interface with configuration controls, grid theater, legend, and intel sidebar.
+* `style.css` — premium dark UI styling for the game board, controls, and dashboard panels with neon glow effects.
+* `app.js` — class-based logic engine that builds the terrain, constructs the Belief Store (KB), and performs resolution-based inference.
 
-## 🚀 Overview
+## Application Overview
 
-**NEXUS** is designed as an interactive AI simulation where an autonomous agent navigates a grid world containing hidden dangers such as pits and the Wumpus.
+The application creates a grid world with pits, Wumpus, and gold. The agent starts in the bottom-left corner and updates its beliefs using percepts from the current cell.
 
-The agent does not have prior knowledge of the environment. Instead, it:
+### Core behavior
 
-* Perceives clues (*breeze, stench, glitter*)
-* Updates its **Knowledge Base (KB)**
-* Applies **logical inference**
-* Decides safe moves intelligently
+* The world generator places pits and Wumpus outside the starting zone and ensures the gold is not isolated behind pits.
+* The agent records visited cells, proven safe cells, and danger cells.
+* Percepts (`breeze`, `stench`, `glitter`) are converted into CNF clauses and added to the KB.
+* The agent uses resolution refutation to prove whether a cell is safe or contains hazards before moving.
+* The agent can plan safe paths using BFS over known-safe nodes.
 
----
+## Features
 
-## 🧩 Key Features
+* Grid size controls from 3x3 up to 8x8.
+* Configurable pit count and Wumpus count.
+* Step-by-step and auto-run controls for the agent.
+* Live dashboard showing KB clauses, resolution operations, move count, percepts, and inference results.
+* Safety-first decision making with speculative shooting only when necessary.
+* **How It Works** panel explaining the Resolution Refutation algorithm.
 
-* 🎮 **Dynamic Grid Environment**
+## Usage
 
-  * Adjustable grid size (3×3 to 8×8)
-  * Randomized placement of pits and Wumpus
-
-* 🧠 **Knowledge-Based Agent**
-
-  * Maintains a structured **Belief Store (KB)**
-  * Converts percepts into **CNF clauses**
-
-* ⚙️ **Resolution-Based Inference**
-
-  * Uses **Resolution Refutation** to prove safety
-  * Avoids unsafe cells through logical deduction
-
-* 📊 **Live Intelligence Dashboard**
-
-  * Displays:
-
-    * Knowledge Base clauses
-    * Inference steps
-    * Agent decisions
-    * Active percepts
-
-* 🔁 **Simulation Controls**
-
-  * Step-by-step execution
-  * Auto-run mode
-
-* 🎯 **Path Planning**
-
-  * Uses **BFS (Breadth-First Search)** over safe cells
-
----
-
-## 🏗️ Project Structure
-
-```
-📁 nexus-wumpus-intelligence
-│
-├── index.html     # Main dashboard UI
-├── style.css      # UI styling (dark theme with neon effects)
-├── app.js         # Core logic engine and inference system
-└── README.md      # Project documentation
-```
-
----
-
-## ⚙️ How It Works
-
-1. **Environment Initialization**
-
-   * Grid is generated with hidden hazards
-   * Start position is always safe
-
-2. **Perception Handling**
-
-   * Agent senses:
-
-     * Breeze → nearby pit
-     * Stench → nearby Wumpus
-     * Glitter → gold
-
-3. **Knowledge Representation**
-
-   * Percepts are translated into **Propositional Logic rules**
-   * Converted into **Conjunctive Normal Form (CNF)**
-
-4. **Inference Engine**
-
-   * Uses **Resolution Algorithm** to:
-
-     * Prove if a cell is safe
-     * Detect possible dangers
-
-5. **Decision Making**
-
-   * Moves only to **logically safe cells**
-   * Applies cautious exploration strategy
-
----
-
-## 🖥️ Getting Started
-
-### ▶️ Run Locally
-
-1. Clone the repository:
-
-```bash
-git clone https://github.com/Hamza07-debug/nexus-wumpus-intelligence.git
-```
-
-2. Open the project folder
-
-3. Run the application:
-
-* Open `index.html` in your browser
-
----
-
-
-## 🎓 Academic Context
-
-This project is part of an **Artificial Intelligence coursework**, focusing on:
-
-* Knowledge-Based Agents
-* Propositional Logic
-* CNF Conversion
-* Logical Entailment
-* Resolution Refutation
-
----
-
-## 🔮 Future Improvements
-
-* Web deployment (Vercel / Netlify)
-* Enhanced UI animations
-* Probabilistic reasoning (Bayesian approach)
-* Multi-agent simulation
-* Performance optimization of resolution engine
-
----
-
+1. Open `index.html` in a browser.
+2. Adjust grid rows, columns, pit count, and Wumpus count.
+3. Click `Initialize` to generate a new world.
+4. Use `Step` or `Auto Run` to simulate the agent.
+   
 ## 👨‍💻 Author
 
-**Hamza Afzaal**
-🎓 BS Computer Science
-🏫 FAST-NUCES (Faisalabad Campus)
-📌 Roll No: 24F-0698
-
----
-
-## 📜 License
-
-This project is for **educational purposes only**.
-Feel free to use and modify with proper attribution.
-
----
-
-## ⭐ Support
-
-If you found this project helpful, consider giving it a ⭐ on GitHub!
+**Hamza Afzaal**  
+🎓 BS Computer Science Student  
+🏫 FAST-NUCES (CFD Campus)  
+📌 Roll No: 24F-0698  
